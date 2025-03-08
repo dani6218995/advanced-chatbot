@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatBox = document.getElementById("chat-box");
     const userInput = document.getElementById("user-input");
     const sendButton = document.getElementById("send-btn");
-    let typingIndicator = null;
 
     sendButton.addEventListener("click", sendMessage);
     userInput.addEventListener("keypress", function (event) {
@@ -17,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         appendMessage("user", message);
         userInput.value = "";
-
         showTypingIndicator();
         
         try {
@@ -26,14 +24,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ message: message })
+                body: JSON.stringify({ message })
             });
 
             const data = await response.json();
-            console.log("AI Response:", data);
-            
             hideTypingIndicator();
-            
+
             if (data && data.content) {
                 appendMessage("bot", formatResponse(data.content));
             } else {
@@ -49,25 +45,34 @@ document.addEventListener("DOMContentLoaded", function () {
     function appendMessage(sender, text) {
         const messageElement = document.createElement("div");
         messageElement.classList.add("message", sender === "user" ? "user-message" : "bot-message");
-        messageElement.innerHTML = text;
         chatBox.appendChild(messageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
+
+        let index = 0;
+        function typeEffect() {
+            if (index < text.length) {
+                messageElement.textContent += text[index];
+                index++;
+                chatBox.scrollTop = chatBox.scrollHeight;
+                setTimeout(typeEffect, 50);
+            }
+        }
+        typeEffect();
     }
 
     function showTypingIndicator() {
-        if (!typingIndicator) {
-            typingIndicator = document.createElement("div");
-            typingIndicator.classList.add("bot-message", "typing");
-            typingIndicator.textContent = "Typing...";
-            chatBox.appendChild(typingIndicator);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+        const typingIndicator = document.createElement("div");
+        typingIndicator.classList.add("bot-message", "typing");
+        typingIndicator.textContent = "Typing...";
+        typingIndicator.id = "typing-indicator";
+        chatBox.appendChild(typingIndicator);
+        chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function hideTypingIndicator() {
+        const typingIndicator = document.getElementById("typing-indicator");
         if (typingIndicator) {
             typingIndicator.remove();
-            typingIndicator = null;
         }
     }
 
