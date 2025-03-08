@@ -13,7 +13,7 @@ body {
 .container {
     width: 100%;
     max-width: 850px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(247, 244, 244, 0.1);
     backdrop-filter: blur(100px);
     border-radius: 50px;
     padding: 10px;
@@ -34,25 +34,35 @@ header h1 {
     padding: 10px;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* ✅ Message Styling Fix */
 .message {
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 5px 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin: 8px 0;
+    max-width: 80%;
+    word-wrap: break-word;
+    white-space: pre-wrap; /* ✅ Fix: Maintain spaces and line breaks */
 }
 
+/* ✅ User Message Alignment & Styling */
 .user-message {
-    background: rgb(179, 129, 164);
+    background: rgb(111, 122, 45);
     color: black;
     text-align: right;
+    align-self: flex-end;
     border-radius: 20px;
 }
 
+/* ✅ Bot Message Alignment & Styling */
 .bot-message {
-    background: rgba(84, 173, 173, 0.2);
-    color: rgb(247, 247, 247);
+    background: rgba(11, 206, 206, 0.2);
+    color: rgb(2, 5, 5);
     text-align: left;
+    align-self: flex-start;
     border-radius: 20px;
 }
 
@@ -70,7 +80,7 @@ input {
 
 button {
     padding: 10px;
-    background: rgb(81, 165, 151);
+    background: rgb(34, 85, 76);
     border: none;
     color: black;
     font-weight: bold;
@@ -81,7 +91,7 @@ button {
 }
 
 footer {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 0.8rem;
-    color: gray;
+    color: rgb(168, 145, 145);
 }
