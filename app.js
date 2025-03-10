@@ -5,10 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const stopButton = document.createElement("button");
     stopButton.textContent = "Stop";
     stopButton.id = "stop-btn";
-    stopButton.style.display = "none";
-    document.querySelector(".input-container").appendChild(stopButton);
-
-    let controller = null;
+    stopButton.style.marginLeft = "10px";
+    sendButton.parentNode.appendChild(stopButton);
+    let controller;
 
     sendButton.addEventListener("click", sendMessage);
     stopButton.addEventListener("click", stopResponse);
@@ -25,22 +24,27 @@ document.addEventListener("DOMContentLoaded", function () {
         appendMessage("user", message);
         userInput.value = "";
         showTypingIndicator();
-        stopButton.style.display = "inline-block";
 
         controller = new AbortController();
         const signal = controller.signal;
 
+        // Automatically detect local or deployed API
+        const apiURL = window.location.hostname.includes("localhost") || window.location.hostname === "127.0.0.1"
+            ? "http://localhost:3000/chat"
+            : "/api/chat";
+
         try {
-            const response = await fetch("http://localhost:3000/chat", {
+            const response = await fetch(apiURL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ message }),
                 signal
             });
 
             const data = await response.json();
             hideTypingIndicator();
-            stopButton.style.display = "none";
 
             if (data && data.content) {
                 appendMessage("bot", formatResponse(data.content));
@@ -48,17 +52,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 appendMessage("bot", "I'm not sure about that.");
             }
         } catch (error) {
-            console.error("Error:", error);
-            hideTypingIndicator();
-            stopButton.style.display = "none";
-            appendMessage("bot", "Response stopped or an error occurred.");
+            if (error.name === "AbortError") {
+                appendMessage("bot", "Response stopped.");
+            } else {
+                console.error("Error:", error);
+                hideTypingIndicator();
+                appendMessage("bot", "Sorry, I am having trouble responding right now.");
+            }
         }
     }
 
     function stopResponse() {
         if (controller) {
             controller.abort();
-            stopButton.style.display = "none";
         }
     }
 
