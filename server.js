@@ -1,14 +1,19 @@
-// server.js (Updated Version)
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const axios = require('axios');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+
+// Allow CORS only for local testing
+const corsOptions = {
+    origin: "*",
+    methods: "GET,POST"
+};
+app.use(cors(corsOptions));
 
 const API_KEY = process.env.OPENROUTER_API_KEY;
 const BASE_URL = "https://openrouter.ai/api/v1/chat/completions";
